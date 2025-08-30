@@ -7,6 +7,7 @@ const withBundleAnalyzer = generated({
 })
 
 const nextConfig: NextConfig = {
+  output: 'export',
   experimental: {
     turbopackPersistentCaching: true,
   }

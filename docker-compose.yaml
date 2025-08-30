@@ -1,0 +1,13 @@
+---
+services:
+  app:
+    build:
+      context: .
+      cache_from:
+        - type=gha
+      cache_to:
+        - type=gha,mode=max
+    working_dir: /app
+    volumes:
+      - ./next/cache/:/app/.next/cache
+      - ./out:/host-out
