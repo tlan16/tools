@@ -7,7 +7,9 @@ const withBundleAnalyzer = generated({
 })
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    turbopackPersistentCaching: true,
+  }
 };
 
 export default withBundleAnalyzer(nextConfig);
