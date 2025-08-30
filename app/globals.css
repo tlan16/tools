@@ -37,86 +37,186 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Material Design 3 color palette */
+  --radius: 8px; /* Material Design uses 8px as standard radius */
+
+  /* Material Design Light Theme */
+  --background: 255 255 255; /* md-sys-color-background */
+  --foreground: 16 16 20; /* md-sys-color-on-background */
+  --card: 255 255 255; /* md-sys-color-surface */
+  --card-foreground: 16 16 20; /* md-sys-color-on-surface */
+  --popover: 255 255 255; /* md-sys-color-surface-container */
+  --popover-foreground: 16 16 20; /* md-sys-color-on-surface */
+
+  /* Material Design Primary Colors (Blue) */
+  --primary: 26 115 232; /* md-sys-color-primary (Material Blue 600) */
+  --primary-foreground: 255 255 255; /* md-sys-color-on-primary */
+
+  /* Material Design Secondary Colors */
+  --secondary: 241 243 244; /* md-sys-color-secondary-container */
+  --secondary-foreground: 60 64 67; /* md-sys-color-on-secondary-container */
+
+  /* Material Design Surface Colors */
+  --muted: 248 249 250; /* md-sys-color-surface-variant */
+  --muted-foreground: 95 99 104; /* md-sys-color-on-surface-variant */
+  --accent: 26 115 232; /* md-sys-color-tertiary */
+  --accent-foreground: 255 255 255; /* md-sys-color-on-tertiary */
+
+  /* Material Design Error Colors */
+  --destructive: 217 48 37; /* md-sys-color-error */
+  --destructive-foreground: 255 255 255; /* md-sys-color-on-error */
+
+  /* Material Design Outline Colors */
+  --border: 218 220 224; /* md-sys-color-outline-variant */
+  --input: 218 220 224; /* md-sys-color-outline */
+  --ring: 26 115 232; /* md-sys-color-primary */
+
+  /* Chart colors using Material Design palette */
+  --chart-1: 26 115 232; /* Blue 600 */
+  --chart-2: 52 168 83; /* Green 600 */
+  --chart-3: 251 188 5; /* Yellow 600 */
+  --chart-4: 234 67 53; /* Red 600 */
+  --chart-5: 156 39 176; /* Purple 600 */
+
+  /* Sidebar colors */
+  --sidebar: 248 249 250; /* md-sys-color-surface-container-low */
+  --sidebar-foreground: 32 33 36; /* md-sys-color-on-surface */
+  --sidebar-primary: 26 115 232; /* md-sys-color-primary */
+  --sidebar-primary-foreground: 255 255 255; /* md-sys-color-on-primary */
+  --sidebar-accent: 241 243 244; /* md-sys-color-secondary-container */
+  --sidebar-accent-foreground: 60 64 67; /* md-sys-color-on-secondary-container */
+  --sidebar-border: 218 220 224; /* md-sys-color-outline-variant */
+  --sidebar-ring: 26 115 232; /* md-sys-color-primary */
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Material Design Dark Theme */
+  --background: 16 16 20; /* md-sys-color-background */
+  --foreground: 227 227 227; /* md-sys-color-on-background */
+  --card: 32 33 36; /* md-sys-color-surface */
+  --card-foreground: 227 227 227; /* md-sys-color-on-surface */
+  --popover: 32 33 36; /* md-sys-color-surface-container */
+  --popover-foreground: 227 227 227; /* md-sys-color-on-surface */
+
+  /* Material Design Primary Colors (Dark) */
+  --primary: 138 180 248; /* md-sys-color-primary (lighter blue for dark theme) */
+  --primary-foreground: 13 13 14; /* md-sys-color-on-primary */
+
+  /* Material Design Secondary Colors (Dark) */
+  --secondary: 48 51 56; /* md-sys-color-secondary-container */
+  --secondary-foreground: 202 205 209; /* md-sys-color-on-secondary-container */
+
+  /* Material Design Surface Colors (Dark) */
+  --muted: 48 51 56; /* md-sys-color-surface-variant */
+  --muted-foreground: 154 160 166; /* md-sys-color-on-surface-variant */
+  --accent: 138 180 248; /* md-sys-color-tertiary */
+  --accent-foreground: 13 13 14; /* md-sys-color-on-tertiary */
+
+  /* Material Design Error Colors (Dark) */
+  --destructive: 242 139 130; /* md-sys-color-error */
+  --destructive-foreground: 25 25 25; /* md-sys-color-on-error */
+
+  /* Material Design Outline Colors (Dark) */
+  --border: 95 99 104; /* md-sys-color-outline-variant */
+  --input: 95 99 104; /* md-sys-color-outline */
+  --ring: 138 180 248; /* md-sys-color-primary */
+
+  /* Chart colors using Material Design dark palette */
+  --chart-1: 138 180 248; /* Blue 300 */
+  --chart-2: 129 201 149; /* Green 300 */
+  --chart-3: 255 213 79; /* Yellow 300 */
+  --chart-4: 242 139 130; /* Red 300 */
+  --chart-5: 206 147 216; /* Purple 300 */
+
+  /* Sidebar colors (Dark) */
+  --sidebar: 22 22 24; /* md-sys-color-surface-container-low */
+  --sidebar-foreground: 227 227 227; /* md-sys-color-on-surface */
+  --sidebar-primary: 138 180 248; /* md-sys-color-primary */
+  --sidebar-primary-foreground: 13 13 14; /* md-sys-color-on-primary */
+  --sidebar-accent: 48 51 56; /* md-sys-color-secondary-container */
+  --sidebar-accent-foreground: 202 205 209; /* md-sys-color-on-secondary-container */
+  --sidebar-border: 95 99 104; /* md-sys-color-outline-variant */
+  --sidebar-ring: 138 180 248; /* md-sys-color-primary */
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Material Design elevation and shadows */
+.elevation-1 {
+  box-shadow: 0px 1px 2px 0px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+.elevation-2 {
+  box-shadow: 0px 1px 2px 0px rgba(60, 64, 67, 0.3), 0px 2px 6px 2px rgba(60, 64, 67, 0.15);
+}
+
+.elevation-3 {
+  box-shadow: 0px 1px 3px 0px rgba(60, 64, 67, 0.3), 0px 4px 8px 3px rgba(60, 64, 67, 0.15);
+}
+
+.elevation-4 {
+  box-shadow: 0px 2px 3px 0px rgba(60, 64, 67, 0.3), 0px 6px 10px 4px rgba(60, 64, 67, 0.15);
+}
+
+.elevation-5 {
+  box-shadow: 0px 4px 4px 0px rgba(60, 64, 67, 0.3), 0px 8px 12px 6px rgba(60, 64, 67, 0.15);
+}
+
+/* Material Design state layers */
+.state-layer-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.state-layer-hover:hover::before {
+  opacity: 0.08;
+}
+
+.state-layer-hover:focus-visible::before {
+  opacity: 0.12;
+}
+
+.state-layer-hover:active::before {
+  opacity: 0.16;
+}
+
+/* Material Design motion */
+.motion-standard {
+  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.motion-decelerated {
+  transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+.motion-accelerated {
+  transition-timing-function: cubic-bezier(0.4, 0.0, 1, 1);
+}
+
+.motion-emphasized {
+  transition-timing-function: cubic-bezier(0.2, 0.0, 0, 1);
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
 }
