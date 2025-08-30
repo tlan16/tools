@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import {useState} from 'react'
+import {Button} from '@/components/ui/button'
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import {github} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 interface KeyPair {
   publicKey: string
@@ -132,7 +134,8 @@ export default function SSHKeygenPage() {
           </Button>
 
           {error && (
-            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl max-w-full overflow-hidden elevation-1">
+            <div
+              className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl max-w-full overflow-hidden elevation-1">
               <div className="break-words">{error}</div>
             </div>
           )}
@@ -142,7 +145,8 @@ export default function SSHKeygenPage() {
           <div className="space-y-6 w-full">
             <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
               <h3 className="text-lg font-semibold mb-3 text-card-foreground">Public Key</h3>
-              <div className="bg-muted p-4 rounded-lg text-sm font-mono break-all max-w-full overflow-x-auto elevation-1">
+              <div
+                className="bg-muted p-4 rounded-lg text-sm font-mono break-all max-w-full overflow-x-auto elevation-1">
                 <div className="min-w-0 break-words whitespace-pre-wrap">
                   {keyPair.publicKey}
                 </div>
@@ -182,38 +186,54 @@ export default function SSHKeygenPage() {
             <div>
               <strong className="text-primary">1. Save your keys:</strong>
               <ul className="ml-4 mt-2 list-disc text-muted-foreground space-y-1">
-                <li>Save the private key to <code className="bg-muted px-2 py-1 rounded break-words text-xs">~/.ssh/id_ed25519</code></li>
-                <li>Save the public key to <code className="bg-muted px-2 py-1 rounded break-words text-xs">~/.ssh/id_ed25519.pub</code></li>
+                <li>Save the private key to <code
+                  className="bg-muted px-2 py-1 rounded break-words text-xs">~/.ssh/id_ed25519</code></li>
+                <li>Save the public key to <code
+                  className="bg-muted px-2 py-1 rounded break-words text-xs">~/.ssh/id_ed25519.pub</code></li>
               </ul>
             </div>
             <div>
               <strong className="text-primary">2. Set correct permissions:</strong>
               <div className="mt-2 bg-muted p-3 rounded-lg font-mono text-xs overflow-x-auto elevation-1">
                 <div className="whitespace-nowrap">
-                  chmod 600 ~/.ssh/id_ed25519<br/>
-                  chmod 644 ~/.ssh/id_ed25519.pub
+                  <SyntaxHighlighter language="shell" style={github}>
+                    {[
+                      `chmod 600 ~/.ssh/id_ed25519`,
+                      `chmod 644 ~/.ssh/id_ed25519.pub`
+                    ].join("\n")}
+                  </SyntaxHighlighter>
                 </div>
               </div>
             </div>
             <div>
               <strong className="text-primary">3. Add to SSH agent:</strong>
               <div className="mt-2 bg-muted p-3 rounded-lg font-mono text-xs overflow-x-auto elevation-1">
-                <div className="whitespace-nowrap">ssh-add ~/.ssh/id_ed25519</div>
+                <div className="whitespace-nowrap">
+                  <SyntaxHighlighter language="shell" style={github}>
+                    {`ssh-add ~/.ssh/id_ed25519`}
+                  </SyntaxHighlighter>
+                </div>
               </div>
             </div>
             <div>
               <strong className="text-primary">4. Add public key to servers:</strong>
               <div className="mt-2 bg-muted p-3 rounded-lg font-mono text-xs overflow-x-auto elevation-1">
                 <div className="whitespace-nowrap">
-                  # Copy public key content to ~/.ssh/authorized_keys on target server<br/>
-                  # Or use: ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server
+                  <SyntaxHighlighter language="shell" style={github}>
+                    {[
+                      `# Copy public key content to ~/.ssh/authorized_keys on target server`,
+                      `# Or use: `,
+                      `ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server`,
+                    ].join("\n")}
+                  </SyntaxHighlighter>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-6 elevation-1 w-full">
+        <div
+          className="rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-6 elevation-1 w-full">
           <h3 className="text-lg font-semibold mb-4 text-yellow-800 dark:text-yellow-200">Security Notes</h3>
           <div className="space-y-3 text-sm text-yellow-700 dark:text-yellow-300 leading-relaxed">
             <p>• Keys are generated entirely in your browser using the native Web Crypto API</p>
