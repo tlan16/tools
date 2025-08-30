@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <!-- Dark circular background -->
+    <circle cx="32" cy="32" r="30" fill="#1a1a1a"/>
+    <!-- Letter T -->
+    <g fill="#ffffff">
+        <!-- Top horizontal bar -->
+        <rect x="12" y="16" width="40" height="8" rx="2"/>
+        <!-- Vertical stem (longer) -->
+        <rect x="28" y="16" width="8" height="40" rx="2"/>
+    </g>
+</svg>
