@@ -40,7 +40,7 @@ jobs:
           dockerfile: Dockerfile
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
       - name: Build with Next.js
-        run: docker compose run --rm --build app
+        run: docker compose run --rm --build ci
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out

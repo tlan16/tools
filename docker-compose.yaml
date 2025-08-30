@@ -1,6 +1,6 @@
 ---
 services:
-  app:
+  ci:
     build:
       context: .
       cache_from:
