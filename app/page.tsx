@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Home() {
   return (
     <div className="flex-1 p-6">
@@ -7,12 +9,16 @@ export default function Home() {
       </p>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-lg border p-4">
+        <Link
+          href="/ssh-keygen"
+          prefetch={true}
+          className="rounded-lg border p-4 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+        >
           <h4 className="font-semibold mb-2">SSH Keygen</h4>
           <p className="text-sm text-muted-foreground">
             Generate Ed25519 SSH key pairs for secure authentication.
           </p>
-        </div>
+        </Link>
       </div>
     </div>
   )
