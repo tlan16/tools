@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -29,6 +30,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.7",
-    "typescript": "^5"
+    "typescript": "^5",
+    "webpack-bundle-analyzer": "^4.10.1"
   }
 }
