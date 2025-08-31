@@ -7,16 +7,26 @@ import { AppSidebar } from "@/components/app-sidebar"
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: 'swap',
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: 'swap',
+  preload: false,
 });
 
 export const metadata: Metadata = {
   title: "Tools",
   description: "Frank's collection of tools.",
+  viewport: "width=device-width, initial-scale=1",
+  robots: "index, follow",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +38,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
     <head>
       <link rel="icon" href="/favicon.ico" sizes="any" />
+      <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      {/* Preload critical CSS */}
+      <link rel="preload" href="/_next/static/css/app.css" as="style" />
+      {/* Critical CSS for above-the-fold content */}
+      <style>{`
+        body { margin: 0; font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .sidebar { width: 256px; background: hsl(var(--sidebar)); }
+        main { flex: 1; }
+      `}</style>
     </head>
     <body
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
