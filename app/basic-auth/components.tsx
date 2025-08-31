@@ -22,7 +22,7 @@ interface GenerationOptions {
   usernameLength: number
 }
 
-// Generate random password with specified options
+// Generate random password with specified options using crypto API
 function generatePassword(options: GenerationOptions): string {
   let charset = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -39,19 +39,25 @@ function generatePassword(options: GenerationOptions): string {
   }
 
   let password = ''
+  const randomBytes = new Uint8Array(options.passwordLength)
+  crypto.getRandomValues(randomBytes)
+
   for (let i = 0; i < options.passwordLength; i++) {
-    password += charset.charAt(Math.floor(Math.random() * charset.length))
+    password += charset.charAt(randomBytes[i] % charset.length)
   }
 
   return password
 }
 
-// Generate random username
+// Generate random username using crypto API
 function generateUsername(length: number): string {
   const charset = 'abcdefghijklmnopqrstuvwxyz0123456789'
   let username = ''
+  const randomBytes = new Uint8Array(length)
+  crypto.getRandomValues(randomBytes)
+
   for (let i = 0; i < length; i++) {
-    username += charset.charAt(Math.floor(Math.random() * charset.length))
+    username += charset.charAt(randomBytes[i] % charset.length)
   }
   return username
 }
@@ -68,7 +74,11 @@ function generateAuthHeader(username: string, password: string): string {
 function generatePasswordHash(password: string): string {
   // This is a simplified hash for demonstration
   // In real applications, use proper bcrypt hashing
-  const salt = '$2b$10$' + Math.random().toString(36).substring(2, 24).padEnd(22, 'a')
+  const randomBytes = new Uint8Array(22)
+  crypto.getRandomValues(randomBytes)
+  const salt = '$2b$10$' + Array.from(randomBytes, byte =>
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[byte % 62]
+  ).join('')
   // Simplified hash - in production use actual bcrypt
   const hash = btoa(salt + password).substring(0, 31)
   return `${salt}${hash}`
