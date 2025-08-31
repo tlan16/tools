@@ -1,6 +1,6 @@
 'use client'
 
-import {useState, useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import {Button} from '@/components/ui/button'
 import {Input} from '@/components/ui/input'
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -239,7 +239,8 @@ export function BasicAuth() {
           </Button>
 
           {error && (
-            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl max-w-full overflow-hidden elevation-1">
+            <div
+              className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl max-w-full overflow-hidden elevation-1">
               <div className="break-words">{error}</div>
             </div>
           )}
@@ -405,24 +406,32 @@ export function BasicAuth() {
               <strong className="text-primary">2. .htpasswd File Setup:</strong>
               <p className="ml-4 mt-2 text-muted-foreground">
                 Create a .htpasswd file in a secure location (outside your web root) and paste the generated content.
-                Then reference this file in your .htaccess or web server configuration.
+                Then reference this file in your nginx server configuration.
               </p>
             </div>
             <div>
-              <strong className="text-primary">3. .htaccess Configuration Example:</strong>
+              <strong className="text-primary">3. Nginx Configuration Example:</strong>
               <div className="ml-4 mt-2 bg-muted p-3 rounded text-xs font-mono">
-                <code>
-                  AuthType Basic<br/>
-                  AuthName "Restricted Area"<br/>
-                  AuthUserFile /path/to/.htpasswd<br/>
-                  Require valid-user
-                </code>
+                <SyntaxHighlighter language="nginx" style={github}>
+                  {
+                    `location /protected/ {\n` +
+                    [
+                      `auth_basic "Restricted Area";`,
+                      `auth_basic_user_file /path/to/.htpasswd;`,
+                      `try_files $uri $uri/ =404;`
+                    ].map(
+                      line => `\t${line}`
+                    ).join("\n") + `\n`
+                    + `}`
+                  }
+                </SyntaxHighlighter>
               </div>
             </div>
             <div>
               <strong className="text-primary">4. URL with Embedded Auth:</strong>
               <p className="ml-4 mt-2 text-muted-foreground">
-                Use the example URL format for quick testing, but avoid embedding credentials in URLs in production environments.
+                Use the example URL format for quick testing, but avoid embedding credentials in URLs in production
+                environments.
               </p>
             </div>
             <div>
