@@ -43,12 +43,6 @@ export default function RootLayout({
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       {/* Preload critical CSS */}
       <link rel="preload" href="/_next/static/css/app.css" as="style" />
-      {/* Critical CSS for above-the-fold content */}
-      <style>{`
-        body { margin: 0; font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-        .sidebar { width: 256px; background: hsl(var(--sidebar)); }
-        main { flex: 1; }
-      `}</style>
     </head>
     <body
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
