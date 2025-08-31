@@ -20,6 +20,17 @@ export default function Home() {
             Generate Ed25519 SSH key pairs for secure authentication.
           </p>
         </Link>
+
+        <Link
+          href="/basic-auth"
+          prefetch={true}
+          className="rounded-lg border p-4 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+        >
+          <h4 className="font-semibold mb-2">Basic Auth</h4>
+          <p className="text-sm text-muted-foreground">
+            Generate HTTP Basic Authentication credentials and headers.
+          </p>
+        </Link>
       </div>
     </div>
   )
