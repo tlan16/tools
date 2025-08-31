@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {Button} from '@/components/ui/button'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {github} from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -99,6 +99,11 @@ export function SSHKeygen() {
     }
   }
 
+  // Auto-generate key pair on component mount
+  useEffect(() => {
+    generateKeyPair()
+  }, [])
+
   const copyToClipboard = async (text: string) => {
     try {
       if (!navigator.clipboard) {
@@ -144,7 +149,17 @@ export function SSHKeygen() {
         {keyPair && (
           <div className="space-y-6 w-full">
             <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
-              <h3 className="text-lg font-semibold mb-3 text-card-foreground">Public Key</h3>
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <h3 className="text-lg font-semibold text-card-foreground">Public Key</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
+                  onClick={() => copyToClipboard(keyPair.publicKey)}
+                >
+                  Copy
+                </Button>
+              </div>
               <div
                 className="bg-muted p-4 rounded-lg text-sm font-mono break-all max-w-full overflow-x-auto elevation-1">
                 <div className="min-w-0 break-words whitespace-pre-wrap">
@@ -154,15 +169,25 @@ export function SSHKeygen() {
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-4"
+                className="mt-4 sm:hidden"
                 onClick={() => copyToClipboard(keyPair.publicKey)}
               >
-                Copy to clipboard
+                Copy public key
               </Button>
             </div>
 
             <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
-              <h3 className="text-lg font-semibold mb-3 text-card-foreground">Private Key</h3>
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <h3 className="text-lg font-semibold text-card-foreground">Private Key</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
+                  onClick={() => copyToClipboard(keyPair.privateKey)}
+                >
+                  Copy
+                </Button>
+              </div>
               <div className="bg-muted p-4 rounded-lg text-sm font-mono max-w-full overflow-x-auto elevation-1">
                 <div className="min-w-0 break-words whitespace-pre-wrap">
                   {keyPair.privateKey}
@@ -171,10 +196,10 @@ export function SSHKeygen() {
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-4"
+                className="mt-4 sm:hidden"
                 onClick={() => copyToClipboard(keyPair.privateKey)}
               >
-                Copy to clipboard
+                Copy private key
               </Button>
             </div>
           </div>
