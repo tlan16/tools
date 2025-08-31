@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Build script that replicates the Docker CMD functionality
+# This script builds the Next.js project and optionally copies output to a host directory
+
+set -e  # Exit on any error
+
+echo "Starting build process..."
+
+# Run the build command
+bun run build
+
+echo "Build completed successfully"
+
+# Check if out directory exists and handle output copying
+if [ -d "out" ]; then
+    echo "Found out directory"
+
+    # Add .nojekyll file for GitHub Pages deployment
+    echo "Adding .nojekyll file for GitHub Pages"
+    touch out/.nojekyll
+
+    # If HOST_OUT environment variable is set, copy to that directory
+    if [ -n "$HOST_OUT" ]; then
+        echo "Copying build artifacts to $HOST_OUT"
+        mkdir -p "$HOST_OUT"
+        cp -r out/* "$HOST_OUT/"
+        echo "Build artifacts copied to host"
+    else
+        echo "No HOST_OUT directory specified, build artifacts remain in ./out"
+        echo "Contents of out directory:"
+        ls -la out/
+    fi
+else
+    echo "No out directory found"
+    exit 1
+fi
+
+echo "Build script completed successfully"
