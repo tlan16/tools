@@ -1,5 +1,12 @@
 FROM oven/bun
 
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean \
+    && apt-get update -qq \
+    && apt-get install -y -qq --no-install-recommends \
+      parallel
+
 WORKDIR /root/.bun/install/cache
 ENV BUN_INSTALL_CACHE_DIR=/root/.bun/install/cache
 
