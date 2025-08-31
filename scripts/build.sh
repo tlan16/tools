@@ -21,14 +21,14 @@ if [ -d "out" ]; then
 
     # for each html,js,woff2 file in the out directory, gz compress it
     echo "Compressing HTML, JS, and WOFF2 files in out directory"
-    find out/ -type f \
-      -name \*.js -o -name \*.woff2 -o -name \*.html \
+    find out/ -type f -o \
+      -name \*.js -name \*.css -name \*.woff2 -name \*.html \
       | parallel gzip --best --keep --force --verbose {}
     echo "Compression completed"
 
 
     # If HOST_OUT environment variable is set, copy to that directory
-    if [ -n "$HOST_OUT" ]; then
+    if [ -n "$HOST_OUT:-" ]; then
         echo "Copying build artifacts to $HOST_OUT"
         mkdir -p "$HOST_OUT"
         cp -r out/* "$HOST_OUT/"
