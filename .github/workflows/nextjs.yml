@@ -32,6 +32,7 @@ jobs:
           path: |
             cache-mount
             .next/cache
+            next/cache
           key: ${{ hashFiles('Dockerfile') }}-${{ hashFiles('package.json') }}-${{ hashFiles('next.config.ts') }}
       - uses: reproducible-containers/buildkit-cache-dance@v3
         with:

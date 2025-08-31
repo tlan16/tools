@@ -1,9 +1,8 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+cd "$(dirname "$0")/../" || exit 1
+set -euo pipefail
 # Build script that replicates the Docker CMD functionality
 # This script builds the Next.js project and optionally copies output to a host directory
-
-set -e  # Exit on any error
 
 echo "Starting build process..."
 

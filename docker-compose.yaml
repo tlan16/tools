@@ -8,6 +8,9 @@ services:
       cache_to:
         - type=gha,mode=max
     working_dir: /app
+    environment:
+      - "HOST_OUT=/host-out"
     volumes:
       - ./next/cache/:/app/.next/cache
+      - ./.next/cache/:/app/.next/cache
       - ./out:/host-out
