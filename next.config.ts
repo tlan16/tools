@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
   output: 'export',
   experimental: {
     turbopackPersistentCaching: true,
+  },
+  headers: {
+    key: 'Cache-Control',
+    value: 'public, max-age=31536000, immutable',
   }
 };
 
