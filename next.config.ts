@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   experimental: {
     turbopackPersistentCaching: true,
   },
+  cleanDistDir: true,
 };
 
 export default withBundleAnalyzer(nextConfig);

@@ -46,7 +46,8 @@ next-env.d.ts
 .vscode/
 
 # Project specifics
-/tools.*.report.*
+/lighthouse-report.report.html
+/lighthouse-report.report.json
 
 # Docker specific
 .dockerignore

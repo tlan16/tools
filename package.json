@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "bun run build && bunx http-server --gzip out"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
