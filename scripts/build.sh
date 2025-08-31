@@ -20,11 +20,11 @@ if [ -d "out" ]; then
     touch out/.nojekyll
 
     # for each html,js,woff2 file in the out directory, gz compress it
-#    echo "Compressing HTML, JS, and WOFF2 files in out directory"
-#    find out/ -type f \
-#      -name \*.js -o -name \*.woff2 -o -name \*.html \
-#      | parallel gzip --best --keep --force --verbose {}
-#    echo "Compression completed"
+    echo "Compressing HTML, JS, and WOFF2 files in out directory"
+    find out/ -type f \
+      -name \*.js -o -name \*.woff2 -o -name \*.html \
+      | parallel gzip --best --keep --force --verbose {}
+    echo "Compression completed"
 
 
     # If HOST_OUT environment variable is set, copy to that directory
