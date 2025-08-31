@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Key, Home } from "lucide-react"
+import { Key, Home, Shield } from "lucide-react"
 import Link from "next/link"
 
 const items = [
@@ -17,6 +17,11 @@ const items = [
     title: "Home",
     url: "/",
     icon: Home,
+  },
+  {
+    title: "Basic Auth",
+    url: "/basic-auth",
+    icon: Shield,
   },
   {
     title: "SSH Keygen",
