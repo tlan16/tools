@@ -36,12 +36,7 @@ function formatValue(v: any) {
 export function BotDetection() {
   const [fp, setFp] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [copyStatus, setCopyStatus] = useState<string>("");
-
-  const toggleExpand = (key: string) => {
-    setExpanded((s) => ({ ...s, [key]: !s[key] }));
-  };
 
   const handleCopy = async (text: string) => {
     try {
@@ -215,7 +210,8 @@ export function BotDetection() {
             {intoliRows.map((r, idx) => (
               <tr key={idx} className="align-top">
                 <td className="border border-gray-300 p-2 align-top w-1/3">{r.label}</td>
-                <td className={`border border-gray-300 p-2 align-top ${r.passed ? 'bg-green-100 text-black' : 'bg-red-100 text-black'}`}>
+                <td
+                  className={`border border-gray-300 p-2 align-top ${r.passed ? 'bg-green-100 text-black' : 'bg-red-100 text-black'}`}>
                   <div className="p-2 text-sm">{formatValue(r.value)}</div>
                 </td>
               </tr>
@@ -328,14 +324,14 @@ export function BotDetection() {
                   <tr key={idx} className="align-top">
                     <td className="border border-gray-300 p-2 align-top w-1/3 font-medium text-sm">{d.k}</td>
                     <td className="border border-gray-300 p-2 align-top text-sm">{formatValue(d.v)}</td>
-                   </tr>
-                 ));
-               })()}
-               </tbody>
-             </table>
-           </div>
-         )}
-       </div>
+                  </tr>
+                ));
+              })()}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* Raw JSON section - collapsed by default with copy button */}
       <div className="w-full overflow-auto">
@@ -345,13 +341,6 @@ export function BotDetection() {
         {!loading && fp && (
           <div className="p-2">
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => toggleExpand('rawJSON')}
-                className="text-sm underline"
-                aria-expanded={expanded['rawJSON']}
-              >
-                {expanded['rawJSON'] ? 'Hide raw JSON' : 'Show raw JSON'}
-              </button>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleCopy(JSON.stringify(fp, null, 2))}
@@ -362,29 +351,28 @@ export function BotDetection() {
                 </button>
                 {/* copy feedback */}
                 {copyStatus && (
-                  <span className={`text-sm font-medium ${copyStatus === 'Copied' ? 'text-green-600' : 'text-red-600'}`} role="status" aria-live="polite">
+                  <span className={`text-sm font-medium ${copyStatus === 'Copied' ? 'text-green-600' : 'text-red-600'}`}
+                        role="status" aria-live="polite">
                     {copyStatus}
                   </span>
                 )}
               </div>
             </div>
-            {expanded['rawJSON'] && (
-              <SyntaxHighlighter language="json5" style={github}>
-                {JSON.stringify(fp, null, 2)}
-              </SyntaxHighlighter>
-             )}
+            <SyntaxHighlighter className="mt-4" language="json5" style={github}>
+              {JSON.stringify(fp, null, 2)}
+            </SyntaxHighlighter>
           </div>
         )}
       </div>
 
       <div className="mt-4">
-         <h2 className="text-lg font-medium">
-           Source:
-           <Link href="https://bot.sannysoft.com/" target="_blank" className="underline px-1">
-             https://bot.sannysoft.com/
-           </Link>
-         </h2>
-       </div>
-     </div>
-   );
- }
+        <h2 className="text-lg font-medium">
+          Source:
+          <Link href="https://bot.sannysoft.com/" target="_blank" className="underline px-1">
+            https://bot.sannysoft.com/
+          </Link>
+        </h2>
+      </div>
+    </div>
+  );
+}
