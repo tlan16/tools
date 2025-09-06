@@ -187,10 +187,12 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+              // Ensure the mobile slideout has an opaque background
+              backgroundColor: `rgb(var(--sidebar))`,
             } as React.CSSProperties
           }
           side={side}
@@ -199,7 +201,7 @@ function Sidebar({
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <div className="flex h-full w-full flex-col bg-sidebar">{children}</div>
         </SheetContent>
       </Sheet>
     )
@@ -509,7 +511,15 @@ function SidebarMenuButton({
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const Comp = asChild ? Slot : "button"
-  const { isMobile, state } = useSidebar()
+  const { isMobile, state, setOpenMobile } = useSidebar()
+
+  // Close mobile sidebar when an item is clicked.
+  const handleClick: React.MouseEventHandler = (e) => {
+    // Call any user provided onClick
+    // @ts-expect-error props may include onClick
+    props.onClick?.(e)
+    if (isMobile && setOpenMobile) setOpenMobile(false)
+  }
 
   const button = (
     <Comp
@@ -519,6 +529,7 @@ function SidebarMenuButton({
       data-active={isActive}
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
       {...props}
+      onClick={handleClick}
     />
   )
 
