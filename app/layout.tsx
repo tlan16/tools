@@ -3,6 +3,7 @@ import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,7 @@ export default function RootLayout({
     >
     <SidebarProvider>
       <AppSidebar />
-      <main className="flex w-full">
+      <main className="flex w-full h-svh overflow-y-auto overflow-x-clip">
         {children}
       </main>
     </SidebarProvider>

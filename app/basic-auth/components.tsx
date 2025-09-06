@@ -231,11 +231,11 @@ export function BasicAuth() {
 
           <Button
             onClick={generateCredentials}
-            variant="default"
-            size="lg"
-            className="mb-4"
+            variant="elevated"
+            size="default"
+            className="px-3 md:px-6"
           >
-            Generate Basic Auth Credentials
+            Generate
           </Button>
 
           {error && (

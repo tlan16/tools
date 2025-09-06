@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Key, Home, Shield } from "lucide-react"
+import { Key, Home, Shield, Bug } from "lucide-react"
 import Link from "next/link"
 
 const items = [
@@ -24,6 +24,11 @@ const items = [
     icon: Shield,
   },
   {
+    title: "Bot Detection",
+    url: "/bot-detection",
+    icon: Bug,
+  },
+  {
     title: "SSH Keygen",
     url: "/ssh-keygen",
     icon: Key,
@@ -35,7 +40,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="px-4 py-2">
-          <h2 className="text-lg font-semibold">Tools</h2>
+          <h2 className="text-lg font-semibold"><Link href="/">Tools</Link></h2>
         </div>
       </SidebarHeader>
       <SidebarContent>
