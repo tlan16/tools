@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Key, Home, Shield, Bug } from "lucide-react"
@@ -39,7 +40,7 @@ const items = [
 ]
 
 export function AppSidebar() {
-  const { isMobile, setOpenMobile } = useSidebar()
+  const { isMobile, setOpenMobile, state } = useSidebar()
 
   const closeIfMobile = () => {
     if (isMobile) setOpenMobile(false)
@@ -48,12 +49,15 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="px-4 py-2">
+        <div className="px-4 py-2 flex items-center justify-between">
           <h2 className="text-lg font-semibold">
             <Link href="/" onClick={closeIfMobile}>
               Tools
             </Link>
           </h2>
+          <div className="hidden md:block">
+            {state === "expanded" && <SidebarTrigger />}
+          </div>
         </div>
       </SidebarHeader>
       <SidebarContent>
