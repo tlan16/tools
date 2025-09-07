@@ -5,6 +5,7 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {github} from "react-syntax-highlighter/dist/esm/styles/hljs";
+import {useQuery} from "@tanstack/react-query";
 
 
 function get(obj: any, path: string | string[], fallback: any = undefined) {
@@ -34,9 +35,12 @@ function formatValue(v: any) {
 }
 
 export function BotDetection() {
-  const [fp, setFp] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
   const [copyStatus, setCopyStatus] = useState<string>("");
+  const {isPending, data: fingerprint} = useQuery({
+    queryKey: ['bot-detection'],
+    queryFn: generateFingerprint,
+    retry: 10,
+  })
 
   const handleCopy = async (text: string) => {
     try {
@@ -49,20 +53,6 @@ export function BotDetection() {
     }
   };
 
-  useEffect(() => {
-    let mounted = true;
-    generateFingerprint()
-      .then((res) => {
-        if (mounted) setFp(res);
-      })
-      .catch((err) => {
-        console.error("generateFingerprint error", err);
-      })
-      .finally(() => mounted && setLoading(false));
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const tests = (fp: any) => {
     if (!fp) return [];
@@ -130,56 +120,56 @@ export function BotDetection() {
     ];
   };
 
-  const rows = fp ? tests(fp) : []
+  const rows = fingerprint ? tests(fingerprint) : []
 
   // Intoli-style summary rows (placed above Additional Info)
-  const intoliRows = fp
+  const intoliRows = fingerprint
     ? [
-      {label: 'User Agent (Old)', value: get(fp, 'userAgent'), passed: !!get(fp, 'userAgent')},
+      {label: 'User Agent (Old)', value: get(fingerprint, 'userAgent'), passed: !!get(fingerprint, 'userAgent')},
       {
         label: 'WebDriver (New)',
-        value: get(fp, 'webDriver'),
-        passed: get(fp, 'webDriver') === false || get(fp, 'webDriver') === undefined
+        value: get(fingerprint, 'webDriver'),
+        passed: get(fingerprint, 'webDriver') === false || get(fingerprint, 'webDriver') === undefined
       },
       {
         label: 'WebDriver Advanced',
-        value: get(fp, 'selenium'),
-        passed: Array.isArray(get(fp, 'selenium')) ? (get(fp, 'selenium') as any[]).length === 0 : get(fp, 'selenium') === false
+        value: get(fingerprint, 'selenium'),
+        passed: Array.isArray(get(fingerprint, 'selenium')) ? (get(fingerprint, 'selenium') as any[]).length === 0 : get(fingerprint, 'selenium') === false
       },
-      {label: 'Chrome (New)', value: get(fp, 'hasChrome'), passed: !!get(fp, 'hasChrome')},
+      {label: 'Chrome (New)', value: get(fingerprint, 'hasChrome'), passed: !!get(fingerprint, 'hasChrome')},
       {
         label: 'Permissions (New)',
-        value: get(fp, 'permissions')?.state ?? get(fp, 'permissions'),
-        passed: !(get(fp, 'permissions')?.state === 'denied')
+        value: get(fingerprint, 'permissions')?.state ?? get(fingerprint, 'permissions'),
+        passed: !(get(fingerprint, 'permissions')?.state === 'denied')
       },
       {
         label: 'Plugins Length (Old)',
-        value: Array.isArray(get(fp, 'plugins')) ? get(fp, 'plugins').length : 'missing',
-        passed: Array.isArray(get(fp, 'plugins'))
+        value: Array.isArray(get(fingerprint, 'plugins')) ? get(fingerprint, 'plugins').length : 'missing',
+        passed: Array.isArray(get(fingerprint, 'plugins'))
       },
       {
         label: 'Plugins is of type PluginArray',
-        value: Array.isArray(get(fp, 'plugins')) ? 'passed' : 'missing',
-        passed: Array.isArray(get(fp, 'plugins'))
+        value: Array.isArray(get(fingerprint, 'plugins')) ? 'passed' : 'missing',
+        passed: Array.isArray(get(fingerprint, 'plugins'))
       },
       {
         label: 'Languages (Old)',
-        value: Array.isArray(get(fp, 'languages')) ? (get(fp, 'languages') as string[]).join(',') : get(fp, 'languages') ?? 'missing',
-        passed: !!get(fp, 'languages')
+        value: Array.isArray(get(fingerprint, 'languages')) ? (get(fingerprint, 'languages') as string[]).join(',') : get(fingerprint, 'languages') ?? 'missing',
+        passed: !!get(fingerprint, 'languages')
       },
       {
         label: 'WebGL Vendor',
-        value: (Array.isArray(get(fp, 'videoCard')) ? get(fp, 'videoCard')[0] : get(fp, 'videoCard')) ?? get(fp, 'detailChrome')?.webglVendor ?? 'missing',
-        passed: !!(Array.isArray(get(fp, 'videoCard')) ? get(fp, 'videoCard')[0] : get(fp, 'videoCard'))
+        value: (Array.isArray(get(fingerprint, 'videoCard')) ? get(fingerprint, 'videoCard')[0] : get(fingerprint, 'videoCard')) ?? get(fingerprint, 'detailChrome')?.webglVendor ?? 'missing',
+        passed: !!(Array.isArray(get(fingerprint, 'videoCard')) ? get(fingerprint, 'videoCard')[0] : get(fingerprint, 'videoCard'))
       },
       {
         label: 'WebGL Renderer',
-        value: (Array.isArray(get(fp, 'videoCard')) ? get(fp, 'videoCard')[1] : get(fp, 'videoCard')) ?? get(fp, 'detailChrome')?.webglRenderer ?? 'missing',
-        passed: !!(Array.isArray(get(fp, 'videoCard')) ? get(fp, 'videoCard')[1] : get(fp, 'videoCard'))
+        value: (Array.isArray(get(fingerprint, 'videoCard')) ? get(fingerprint, 'videoCard')[1] : get(fingerprint, 'videoCard')) ?? get(fingerprint, 'detailChrome')?.webglRenderer ?? 'missing',
+        passed: !!(Array.isArray(get(fingerprint, 'videoCard')) ? get(fingerprint, 'videoCard')[1] : get(fingerprint, 'videoCard'))
       },
       {
         label: 'Broken Image Dimensions',
-        value: get(fp, 'brokenImageDims') ?? get(fp, 'brokenImageDimensions') ?? '24x24',
+        value: get(fingerprint, 'brokenImageDims') ?? get(fingerprint, 'brokenImageDimensions') ?? '24x24',
         passed: true
       },
     ]
@@ -195,10 +185,10 @@ export function BotDetection() {
         <h3 className="text-2xl font-semibold mt-6">Summary</h3>
       </div>
 
-      {loading && <div className="p-4">Collecting fingerprint…</div>}
+      {isPending && <div className="p-4">Collecting fingerprint…</div>}
 
       <div className="w-full overflow-auto">
-        {!loading && (
+        {!isPending && (
           <table className="w-full border-collapse border border-gray-300 mb-6">
             <thead>
             <tr>
@@ -226,7 +216,7 @@ export function BotDetection() {
           <h3 className="text-2xl font-semibold mt-6">Additional Info</h3>
         </div>
 
-        {!loading && (
+        {!isPending && (
           <table className="w-full border-collapse border border-gray-300">
             <thead>
             <tr>
@@ -258,7 +248,7 @@ export function BotDetection() {
           <h3 className="text-2xl font-semibold mt-6">Some details</h3>
         </div>
 
-        {!loading && fp && (
+        {!isPending && fingerprint && (
           <div className="w-full overflow-auto">
             <table className="w-full border-collapse border border-gray-300 mt-2">
               <tbody>
@@ -267,58 +257,70 @@ export function BotDetection() {
                 // navigator-like properties
                 details.push({
                   k: 'navigator.cookieEnabled',
-                  v: get(fp, 'navigator.cookieEnabled') ?? get(fp, 'cookieEnabled')
+                  v: get(fingerprint, 'navigator.cookieEnabled') ?? get(fingerprint, 'cookieEnabled')
                 });
                 details.push({
                   k: 'navigator.doNotTrack',
-                  v: get(fp, 'navigator.doNotTrack') ?? get(fp, 'doNotTrack') ?? 'unspecified'
+                  v: get(fingerprint, 'navigator.doNotTrack') ?? get(fingerprint, 'doNotTrack') ?? 'unspecified'
                 });
-                details.push({k: 'navigator.msDoNotTrack', v: get(fp, 'navigator.msDoNotTrack') ?? 'undefined'});
-                details.push({k: 'navigator.sendBeacon', v: get(fp, 'navigator.sendBeacon') ?? ' '});
-                details.push({k: 'navigator.userAgent', v: get(fp, 'userAgent')});
-                details.push({k: 'navigator.appName', v: get(fp, 'navigator.appName') ?? 'Netscape'});
-                details.push({k: 'navigator.vendor', v: get(fp, 'navigator.vendor') ?? 'Google Inc.'});
-                details.push({k: 'navigator.appCodeName', v: get(fp, 'navigator.appCodeName') ?? 'Mozilla'});
-                details.push({k: 'navigator.getUserMedia', v: get(fp, 'navigator.getUserMedia') ?? ''});
-                details.push({k: 'navigator.sayswho', v: get(fp, 'navigator.sayswho') ?? 'undefined'});
-                details.push({k: 'navigator.javaEnabled', v: get(fp, 'navigator.javaEnabled') ?? false});
-                details.push({k: 'navigator.plugins', v: get(fp, 'plugins') ?? []});
+                details.push({
+                  k: 'navigator.msDoNotTrack',
+                  v: get(fingerprint, 'navigator.msDoNotTrack') ?? 'undefined'
+                });
+                details.push({k: 'navigator.sendBeacon', v: get(fingerprint, 'navigator.sendBeacon') ?? ' '});
+                details.push({k: 'navigator.userAgent', v: get(fingerprint, 'userAgent')});
+                details.push({k: 'navigator.appName', v: get(fingerprint, 'navigator.appName') ?? 'Netscape'});
+                details.push({k: 'navigator.vendor', v: get(fingerprint, 'navigator.vendor') ?? 'Google Inc.'});
+                details.push({k: 'navigator.appCodeName', v: get(fingerprint, 'navigator.appCodeName') ?? 'Mozilla'});
+                details.push({k: 'navigator.getUserMedia', v: get(fingerprint, 'navigator.getUserMedia') ?? ''});
+                details.push({k: 'navigator.sayswho', v: get(fingerprint, 'navigator.sayswho') ?? 'undefined'});
+                details.push({k: 'navigator.javaEnabled', v: get(fingerprint, 'navigator.javaEnabled') ?? false});
+                details.push({k: 'navigator.plugins', v: get(fingerprint, 'plugins') ?? []});
                 details.push({
                   k: 'screen.width',
-                  v: get(fp, 'screen.wInnerWidth') ?? get(fp, 'screen.width') ?? get(fp, 'screen')?.width ?? get(fp, 'screen')
+                  v: get(fingerprint, 'screen.wInnerWidth') ?? get(fingerprint, 'screen.width') ?? get(fingerprint, 'screen')?.width ?? get(fingerprint, 'screen')
                 });
                 details.push({
                   k: 'screen.height',
-                  v: get(fp, 'screen.wInnerHeight') ?? get(fp, 'screen.height') ?? get(fp, 'screen')?.height ?? get(fp, 'screen')
+                  v: get(fingerprint, 'screen.wInnerHeight') ?? get(fingerprint, 'screen.height') ?? get(fingerprint, 'screen')?.height ?? get(fingerprint, 'screen')
                 });
                 details.push({
                   k: 'screen.colorDepth',
-                  v: get(fp, 'screen.sColorDepth') ?? get(fp, 'screen.colorDepth') ?? 0
+                  v: get(fingerprint, 'screen.sColorDepth') ?? get(fingerprint, 'screen.colorDepth') ?? 0
                 });
                 details.push({
                   k: 'navigator.language',
-                  v: Array.isArray(get(fp, 'languages')) ? get(fp, 'languages').join(',') : get(fp, 'languages') ?? get(fp, 'language')
+                  v: Array.isArray(get(fingerprint, 'languages')) ? get(fingerprint, 'languages').join(',') : get(fingerprint, 'languages') ?? get(fingerprint, 'language')
                 });
-                details.push({k: 'navigator.loadPurpose', v: get(fp, 'navigator.loadPurpose') ?? 'undefined'});
+                details.push({k: 'navigator.loadPurpose', v: get(fingerprint, 'navigator.loadPurpose') ?? 'undefined'});
                 details.push({
                   k: 'navigator.platform',
-                  v: get(fp, 'platform') ?? get(fp, 'navigator.platform') ?? 'MacIntel'
+                  v: get(fingerprint, 'platform') ?? get(fingerprint, 'navigator.platform') ?? 'MacIntel'
                 });
                 details.push({
                   k: 'navigator.mediaDevices',
-                  v: (get(fp, 'multimediaDevices') ? `audioinput: id = ${get(fp, 'multimediaDevices').micros ?? ''} videoinput: id = ${get(fp, 'multimediaDevices').webcams ?? ''}` : '')
+                  v: (get(fingerprint, 'multimediaDevices') ? `audioinput: id = ${get(fingerprint, 'multimediaDevices').micros ?? ''} videoinput: id = ${get(fingerprint, 'multimediaDevices').webcams ?? ''}` : '')
                 });
-                details.push({k: 'navigator.getBattery details', v: get(fp, 'battery') ?? ''});
+                details.push({k: 'navigator.getBattery details', v: get(fingerprint, 'battery') ?? ''});
 
                 // canvas hashes (best-effort from fp fields)
                 details.push({
                   k: 'Canvas1',
-                  v: get(fp, 'canvas1') ?? get(fp, 'canvasHash1') ?? get(fp, 'tpCanvas') ?? ''
+                  v: get(fingerprint, 'canvas1') ?? get(fingerprint, 'canvasHash1') ?? get(fingerprint, 'tpCanvas') ?? ''
                 });
-                details.push({k: 'Canvas2', v: get(fp, 'canvas2') ?? get(fp, 'canvasHash2') ?? ''});
-                details.push({k: 'Canvas3 (iframe sandbox)', v: get(fp, 'canvas3') ?? get(fp, 'canvasHash3') ?? ''});
-                details.push({k: 'Canvas4 (iframe sandbox)', v: get(fp, 'canvas4') ?? get(fp, 'canvasHash4') ?? ''});
-                details.push({k: 'Canvas5 (iframe)', v: get(fp, 'canvas5') ?? get(fp, 'canvasHash5') ?? ''});
+                details.push({k: 'Canvas2', v: get(fingerprint, 'canvas2') ?? get(fingerprint, 'canvasHash2') ?? ''});
+                details.push({
+                  k: 'Canvas3 (iframe sandbox)',
+                  v: get(fingerprint, 'canvas3') ?? get(fingerprint, 'canvasHash3') ?? ''
+                });
+                details.push({
+                  k: 'Canvas4 (iframe sandbox)',
+                  v: get(fingerprint, 'canvas4') ?? get(fingerprint, 'canvasHash4') ?? ''
+                });
+                details.push({
+                  k: 'Canvas5 (iframe)',
+                  v: get(fingerprint, 'canvas5') ?? get(fingerprint, 'canvasHash5') ?? ''
+                });
 
                 return details.map((d, idx) => (
                   <tr key={idx} className="align-top">
@@ -338,12 +340,12 @@ export function BotDetection() {
         <div>
           <h3 className="text-2xl font-semibold mt-6">Raw JSON</h3>
         </div>
-        {!loading && fp && (
+        {!isPending && fingerprint && (
           <div className="p-2">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleCopy(JSON.stringify(fp, null, 2))}
+                  onClick={() => handleCopy(JSON.stringify(fingerprint, null, 2))}
                   className="text-sm underline"
                   disabled={copyStatus === 'Copied'}
                 >
@@ -359,7 +361,7 @@ export function BotDetection() {
               </div>
             </div>
             <SyntaxHighlighter className="mt-4" language="json5" style={github}>
-              {JSON.stringify(fp, null, 2)}
+              {JSON.stringify(fingerprint, null, 2)}
             </SyntaxHighlighter>
           </div>
         )}
