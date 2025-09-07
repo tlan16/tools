@@ -13,7 +13,8 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { Key, Home, Shield, Bug } from "lucide-react"
+import {Key, Home, Shield, Bug, ArrowLeftToLine} from "lucide-react"
+import {Button} from "@/components/ui/button"
 import Link from "next/link"
 
 const items = [
@@ -40,7 +41,7 @@ const items = [
 ]
 
 export function AppSidebar() {
-  const { isMobile, setOpenMobile, state } = useSidebar()
+  const {isMobile, setOpenMobile, state, openMobile} = useSidebar()
 
   const closeIfMobile = () => {
     if (isMobile) setOpenMobile(false)
@@ -55,9 +56,24 @@ export function AppSidebar() {
               Tools
             </Link>
           </h2>
+          {/* Sidebar trigger sits inside the sidebar on desktop */}
           <div className="hidden md:block">
-            {state === "expanded" && <SidebarTrigger />}
+            {state === "expanded" && <SidebarTrigger/>}
           </div>
+          {/* Mobile close button visible when the mobile sheet is open */}
+          {isMobile && openMobile && (
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Close sidebar"
+                onClick={() => setOpenMobile(false)}
+                className="ml-2"
+              >
+                <ArrowLeftToLine className="w-4 h-4"/>
+              </Button>
+            </div>
+          )}
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -69,7 +85,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link href={item.url} prefetch={true}>
-                      <item.icon />
+                      <item.icon/>
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

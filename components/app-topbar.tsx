@@ -8,7 +8,7 @@ export function AppTopbar() {
   // Determine whether the sidebar is currently expanded/open.
   const isExpanded = isMobile ? openMobile : open;
   // Show the topbar toggle when on mobile or when the sidebar is collapsed on desktop
-  const showTopbarToggle = isMobile || state === "collapsed";
+  const showTopbarToggle = (isMobile && !openMobile) || state === "collapsed";
 
   return (
     <header className="w-full h-14 flex items-center px-4 border-b bg-white/80 backdrop-blur z-10">
