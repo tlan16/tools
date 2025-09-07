@@ -66,10 +66,44 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void
 }) {
   const isMobile = useIsMobile()
-  const [openMobile, setOpenMobile] = React.useState(false)
+  // Internal mobile open state and a wrapped setter that syncs with history.
+  const [openMobile, _setOpenMobile] = React.useState(false)
 
-  // This is the internal state of the sidebar.
-  // We use openProp and setOpenProp for control from outside the component.
+  const setOpenMobile = React.useCallback(
+    (value: boolean | ((value: boolean) => boolean)) => {
+      const next = typeof value === "function" ? value(openMobile) : value
+      if (next === openMobile) return
+
+      // Opening: set state and push a history entry so the back button can close the sheet.
+      if (next) {
+        _setOpenMobile(true)
+        if (typeof window !== "undefined") {
+          try {
+            window.history.pushState({ sidebarMobile: true }, "")
+          } catch (e) {
+            /* ignore */
+          }
+        }
+        return
+      }
+
+      // Closing: if the history entry exists, go back to pop it (popstate handler will close).
+      if (typeof window !== "undefined" && window.history.state && (window.history.state as any).sidebarMobile) {
+        try {
+          window.history.back()
+        } catch (e) {
+          // Fallback to directly setting state
+          _setOpenMobile(false)
+        }
+      } else {
+        _setOpenMobile(false)
+      }
+    },
+    [openMobile]
+  )
+
+   // This is the internal state of the sidebar.
+   // We use openProp and setOpenProp for control from outside the component.
   const [_open, _setOpen] = React.useState(defaultOpen)
   const open = openProp ?? _open
   const setOpen = React.useCallback(
@@ -86,6 +120,22 @@ function SidebarProvider({
     },
     [setOpenProp, open]
   )
+
+  // Close the mobile sidebar when the user navigates back. Use the internal setter to
+  // avoid triggering history.back() again from the popstate handler.
+  React.useEffect(() => {
+    if (!isMobile) return
+
+    const handlePop = (event: PopStateEvent) => {
+      if (openMobile) {
+        // Directly set the internal state without touching history.
+        _setOpenMobile(false)
+      }
+    }
+
+    window.addEventListener("popstate", handlePop)
+    return () => window.removeEventListener("popstate", handlePop)
+  }, [isMobile, openMobile])
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
