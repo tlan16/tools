@@ -3,13 +3,12 @@ import type {NextConfig} from "next";
 import generated from "@next/bundle-analyzer";
 
 const withBundleAnalyzer = generated({
-  enabled: true,
+  enabled: process.env.NODE_ENV === 'production',
 })
 
 const nextConfig: NextConfig = {
   output: 'export',
   experimental: {
-    turbopackPersistentCaching: true,
   },
   cleanDistDir: true,
 };
