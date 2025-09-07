@@ -84,7 +84,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url} prefetch={true}>
+                    <Link href={item.url} prefetch={true} onClick={closeIfMobile}>
                       <item.icon/>
                       <span>{item.title}</span>
                     </Link>
