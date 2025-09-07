@@ -1,159 +1,56 @@
-'use client'
+'use client';
 
-import {useEffect, useState} from 'react'
-import {Button} from '@/components/ui/button'
-import {Input} from '@/components/ui/input'
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import {github} from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import {
+  BasicAuthCredentials,
+  CredentialOptions,
+  defaultCredential,
+  defaultPasswordOptions, generateCredentials, generatePassword, generateUsername
+} from "@/app/basic-auth/generateCredentials";
+import {useForm} from "react-hook-form";
+import {useClipboard} from "@/hooks/use-clipboard";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Codeblock} from "@/components/codeblock/codeblock";
 
-interface BasicAuthCredentials {
+type FormInputs = {
   username: string
   password: string
-  authHeader: string
-  htpasswdContent: string
-  exampleUrl: string
-}
-
-interface GenerationOptions {
-  includeNumbers: boolean
-  includeUppercase: boolean
-  includeSpecialChars: boolean
-  passwordLength: number
-  usernameLength: number
-}
-
-// Generate random password with specified options using crypto API
-function generatePassword(options: GenerationOptions): string {
-  let charset = 'abcdefghijklmnopqrstuvwxyz'
-
-  if (options.includeNumbers) {
-    charset += '0123456789'
-  }
-
-  if (options.includeUppercase) {
-    charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  }
-
-  if (options.includeSpecialChars) {
-    charset += '!@#$%^&*()_+-=[]{}|;:,.<>?'
-  }
-
-  let password = ''
-  const randomBytes = new Uint8Array(options.passwordLength)
-  crypto.getRandomValues(randomBytes)
-
-  for (let i = 0; i < options.passwordLength; i++) {
-    password += charset.charAt(randomBytes[i] % charset.length)
-  }
-
-  return password
-}
-
-// Generate random username using crypto API
-function generateUsername(length: number): string {
-  const charset = 'abcdefghijklmnopqrstuvwxyz0123456789'
-  let username = ''
-  const randomBytes = new Uint8Array(length)
-  crypto.getRandomValues(randomBytes)
-
-  for (let i = 0; i < length; i++) {
-    username += charset.charAt(randomBytes[i] % charset.length)
-  }
-  return username
-}
-
-// Generate basic auth header
-function generateAuthHeader(username: string, password: string): string {
-  const credentials = `${username}:${password}`
-  const encoded = btoa(credentials)
-  return `Authorization: Basic ${encoded}`
-}
-
-// Simple bcrypt-like hash generation (for demo purposes)
-// In production, use a proper bcrypt library
-function generatePasswordHash(password: string): string {
-  // This is a simplified hash for demonstration
-  // In real applications, use proper bcrypt hashing
-  const randomBytes = new Uint8Array(22)
-  crypto.getRandomValues(randomBytes)
-  const salt = '$2b$10$' + Array.from(randomBytes, byte =>
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[byte % 62]
-  ).join('')
-  // Simplified hash - in production use actual bcrypt
-  const hash = btoa(salt + password).substring(0, 31)
-  return `${salt}${hash}`
-}
-
-// Generate htpasswd content
-function generateHtpasswdContent(username: string, password: string): string {
-  const passwordHash = generatePasswordHash(password)
-  return `${username}:${passwordHash}`
-}
-
-// Generate example URL with embedded auth
-function generateExampleUrl(username: string, password: string): string {
-  return `https://${encodeURIComponent(username)}:${encodeURIComponent(password)}@example.com/protected/resource`
+  credentialOptions: CredentialOptions
+  credentials: BasicAuthCredentials
 }
 
 export function BasicAuth() {
-  const [credentials, setCredentials] = useState<BasicAuthCredentials | null>(null)
-  const [options, setOptions] = useState<GenerationOptions>({
-    includeNumbers: true,
-    includeUppercase: true,
-    includeSpecialChars: true,
-    passwordLength: 16,
-    usernameLength: 8
-  })
-  const [customUsername, setCustomUsername] = useState('')
-  const [customPassword, setCustomPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const {
+    register,
+    formState: {dirtyFields},
+    getValues,
+    setValue,
+    resetField,
+  } = useForm<FormInputs>({
+    defaultValues: ({
+      username: defaultCredential.username,
+      password: defaultCredential.password,
+      credentialOptions: defaultPasswordOptions,
+      credentials: defaultCredential,
+    } satisfies FormInputs),
+  });
 
-  // Update credentials whenever username or password changes
-  useEffect(() => {
-    if (customUsername && customPassword) {
-      updateCredentials(customUsername, customPassword)
+  const {copyToClipboard} = useClipboard()
+  const updateCredentials = () => {
+    let new_username = getValues("username")?.trim() ?? ""
+    let new_password = getValues("password")?.trim() ?? ""
+    let dirty = dirtyFields.username && dirtyFields.password
+
+    if (!new_username || !dirty) {
+      new_username = generateUsername(getValues("credentialOptions.usernameLength"))
     }
-  }, [customUsername, customPassword])
-
-  // Auto-generate credentials when component mounts or options change
-  useEffect(() => {
-    generateCredentials()
-  }, [options])
-
-  const updateCredentials = (username: string, password: string) => {
-    setCredentials({
-      username,
-      password,
-      authHeader: generateAuthHeader(username, password),
-      htpasswdContent: generateHtpasswdContent(username, password),
-      exampleUrl: generateExampleUrl(username, password)
-    })
-  }
-
-  const generateCredentials = () => {
-    setError(null)
-
-    try {
-      const username = generateUsername(options.usernameLength)
-      const password = generatePassword(options)
-
-      setCustomUsername(username)
-      setCustomPassword(password)
-      updateCredentials(username, password)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate credentials')
+    if (!new_password || !dirty) {
+      new_password = generatePassword(getValues("credentialOptions"))
     }
-  }
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      if (!navigator.clipboard) {
-        throw new Error('Clipboard API not available. Please use a modern browser or ensure the page is served over HTTPS.')
-      }
-      await navigator.clipboard.writeText(text)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to copy to clipboard')
-    }
+    const new_credentials = generateCredentials(new_username, new_password)
+    setValue('credentials', new_credentials)
+    resetField("username", {defaultValue: new_credentials.username})
+    resetField("password", {defaultValue: new_credentials.password})
   }
 
   return (
@@ -179,8 +76,9 @@ export function BasicAuth() {
                   type="number"
                   min="4"
                   max="32"
-                  value={options.usernameLength}
-                  onChange={(e) => setOptions({...options, usernameLength: parseInt(e.target.value) || 8})}
+                  {...register("credentialOptions.usernameLength", {
+                    onChange: updateCredentials
+                  })}
                 />
               </div>
               <div className="space-y-2">
@@ -189,8 +87,9 @@ export function BasicAuth() {
                   type="number"
                   min="8"
                   max="64"
-                  value={options.passwordLength}
-                  onChange={(e) => setOptions({...options, passwordLength: parseInt(e.target.value) || 16})}
+                  {...register("credentialOptions.passwordLength", {
+                    onChange: updateCredentials
+                  })}
                 />
               </div>
             </div>
@@ -201,27 +100,30 @@ export function BasicAuth() {
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={options.includeNumbers}
-                    onChange={(e) => setOptions({...options, includeNumbers: e.target.checked})}
                     className="rounded"
+                    {...register("credentialOptions.includeNumbers", {
+                      onChange: updateCredentials
+                    })}
                   />
                   <span className="text-sm">Numbers</span>
                 </label>
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={options.includeUppercase}
-                    onChange={(e) => setOptions({...options, includeUppercase: e.target.checked})}
                     className="rounded"
+                    {...register("credentialOptions.includeUppercase", {
+                      onChange: updateCredentials
+                    })}
                   />
                   <span className="text-sm">Uppercase Letters</span>
                 </label>
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={options.includeSpecialChars}
-                    onChange={(e) => setOptions({...options, includeSpecialChars: e.target.checked})}
                     className="rounded"
+                    {...register("credentialOptions.includeSpecialChars", {
+                      onChange: updateCredentials
+                    })}
                   />
                   <span className="text-sm">Special Characters</span>
                 </label>
@@ -230,20 +132,13 @@ export function BasicAuth() {
           </div>
 
           <Button
-            onClick={generateCredentials}
+            onClick={updateCredentials}
             variant="elevated"
             size="default"
             className="px-3 md:px-6"
           >
             Generate
           </Button>
-
-          {error && (
-            <div
-              className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl max-w-full overflow-hidden elevation-1">
-              <div className="break-words">{error}</div>
-            </div>
-          )}
         </div>
 
         {/* Editable Credentials */}
@@ -253,144 +148,109 @@ export function BasicAuth() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Username</label>
               <Input
-                value={customUsername}
-                onChange={(e) => setCustomUsername(e.target.value)}
                 placeholder="Enter username"
+                {...register("username", {
+                  onChange: () => {
+                    if (getValues('username')?.trim())
+                      updateCredentials()
+                  }
+                })}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Password</label>
               <Input
-                value={customPassword}
-                onChange={(e) => setCustomPassword(e.target.value)}
                 placeholder="Enter password"
+                {...register("password", {
+                  onChange: () => {
+                    if (getValues('password')?.trim())
+                      updateCredentials()
+                  }
+                })}
               />
             </div>
           </div>
         </div>
 
-        {credentials && (
-          <div className="space-y-6 w-full">
-            {/* Username and Password */}
-            <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
-              <h3 className="text-lg font-semibold mb-3 text-card-foreground">Username & Password</h3>
-              <div className="bg-muted p-4 rounded-lg text-sm font-mono break-all max-w-full overflow-x-auto">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <strong>Username:</strong> {credentials.username}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="ml-2 h-8 px-2 text-xs"
-                      onClick={() => copyToClipboard(credentials.username)}
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <strong>Password:</strong> {credentials.password}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="ml-2 h-8 px-2 text-xs"
-                      onClick={() => copyToClipboard(credentials.password)}
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Auth Header */}
-            <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <h3 className="text-lg font-semibold text-card-foreground">HTTP Authorization Header</h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
-                  onClick={() => copyToClipboard(credentials.authHeader)}
-                >
-                  Copy
-                </Button>
-              </div>
-              <div className="bg-muted p-4 rounded-lg text-sm font-mono max-w-full overflow-x-auto">
-                <SyntaxHighlighter language="http" style={github}>
-                  {credentials.authHeader}
-                </SyntaxHighlighter>
-              </div>
+        <div className="space-y-6 w-full">
+          {/* Auth Header */}
+          <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <h3 className="text-lg font-semibold text-card-foreground">HTTP Authorization Header</h3>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-4 sm:hidden"
-                onClick={() => copyToClipboard(credentials.authHeader)}
+                className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
+                onClick={() => copyToClipboard(getValues('credentials.authHeader'))}
               >
-                Copy header
+                Copy
               </Button>
             </div>
-
-            {/* .htpasswd Content */}
-            <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <h3 className="text-lg font-semibold text-card-foreground">.htpasswd File Content</h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
-                  onClick={() => copyToClipboard(credentials.htpasswdContent)}
-                >
-                  Copy
-                </Button>
-              </div>
-              <div className="bg-muted p-4 rounded-lg text-sm font-mono max-w-full overflow-x-auto">
-                <SyntaxHighlighter language="apache" style={github}>
-                  {credentials.htpasswdContent}
-                </SyntaxHighlighter>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-4 sm:hidden"
-                onClick={() => copyToClipboard(credentials.htpasswdContent)}
-              >
-                Copy .htpasswd content
-              </Button>
-            </div>
-
-            {/* Example URL */}
-            <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <h3 className="text-lg font-semibold text-card-foreground">Example URL with Embedded Auth</h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
-                  onClick={() => copyToClipboard(credentials.exampleUrl)}
-                >
-                  Copy
-                </Button>
-              </div>
-              <div className="bg-muted p-4 rounded-lg text-sm font-mono break-all max-w-full overflow-x-auto">
-                <div className="min-w-0 break-words whitespace-pre-wrap">
-                  {credentials.exampleUrl}
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-4 sm:hidden"
-                onClick={() => copyToClipboard(credentials.exampleUrl)}
-              >
-                Copy URL
-              </Button>
-            </div>
+            <Codeblock language="http" theme="github-light" showLanguage={false}>
+              {getValues('credentials.authHeader')}
+            </Codeblock>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4 sm:hidden"
+              onClick={() => copyToClipboard(getValues('credentials.authHeader'))}
+            >
+              Copy header
+            </Button>
           </div>
-        )}
+
+          {/* .htpasswd Content */}
+          <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <h3 className="text-lg font-semibold text-card-foreground">.htpasswd File Content</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
+                onClick={() => copyToClipboard(getValues('credentials.htpasswdContent'))}
+              >
+                Copy
+              </Button>
+            </div>
+            <Codeblock language="http" theme="github-light" showLanguage={false}>
+              {getValues('credentials.htpasswdContent')}
+            </Codeblock>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4 sm:hidden"
+              onClick={() => copyToClipboard(getValues('credentials.htpasswdContent'))}
+            >
+              Copy .htpasswd content
+            </Button>
+          </div>
+
+          {/* Example URL */}
+          <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <h3 className="text-lg font-semibold text-card-foreground">Example URL with Embedded Auth</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0 h-8 px-2 text-xs hidden sm:flex"
+                onClick={() => copyToClipboard(getValues('credentials.exampleUrl'))}
+              >
+                Copy
+              </Button>
+            </div>
+            <Codeblock language="url" theme="github-light" showLanguage={false}>
+              {getValues('credentials.exampleUrl')}
+            </Codeblock>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4 sm:hidden"
+              onClick={() => copyToClipboard(getValues('credentials.exampleUrl'))}
+            >
+              Copy URL
+            </Button>
+          </div>
+        </div>
 
         {/* Usage Instructions */}
         <div className="rounded-xl border bg-card p-6 elevation-1 w-full">
@@ -411,21 +271,19 @@ export function BasicAuth() {
             </div>
             <div>
               <strong className="text-primary">3. Nginx Configuration Example:</strong>
-              <div className="ml-4 mt-2 bg-muted p-3 rounded text-xs font-mono">
-                <SyntaxHighlighter language="nginx" style={github}>
-                  {
-                    `location /protected/ {\n` +
-                    [
-                      `auth_basic "Restricted Area";`,
-                      `auth_basic_user_file /path/to/.htpasswd;`,
-                      `try_files $uri $uri/ =404;`
-                    ].map(
-                      line => `\t${line}`
-                    ).join("\n") + `\n`
-                    + `}`
-                  }
-                </SyntaxHighlighter>
-              </div>
+              <Codeblock language="nginx" theme="github-light" showLanguage={false}>
+                {
+                  `location /protected/ {\n` +
+                  [
+                    `auth_basic "Restricted Area";`,
+                    `auth_basic_user_file /path/to/.htpasswd;`,
+                    `try_files $uri $uri/ =404;`
+                  ].map(
+                    line => `\t${line}`
+                  ).join("\n") + "\n"
+                  + `}`
+                }
+              </Codeblock>
             </div>
             <div>
               <strong className="text-primary">4. URL with Embedded Auth:</strong>

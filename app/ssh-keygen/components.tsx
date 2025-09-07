@@ -1,13 +1,11 @@
 'use client'
 
 import {Button} from '@/components/ui/button'
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import {github} from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {useQuery} from "@tanstack/react-query";
 import {generateKeyPair} from "@/app/ssh-keygen/generateKeyPair";
 import {useClipboard} from '@/hooks/use-clipboard'
-import ShikiHighlighter from "react-shiki";
-import '@/components/styles/codeblock.css'
+import '@/components/codeblock/codeblock.css'
+import {Codeblock} from "@/components/codeblock/codeblock";
 
 export function SSHKeygen() {
   const {isFetching, data: keyPair, refetch} = useQuery({
@@ -64,9 +62,9 @@ export function SSHKeygen() {
                   Copy
                 </Button>
               </div>
-              <ShikiHighlighter language="shell" theme="github-light" showLanguage={false}>
+              <Codeblock language="publickey" theme="github-light" showLanguage={false}>
                 {keyPair.publicKey}
-              </ShikiHighlighter>
+              </Codeblock>
               <Button
                 variant="outline"
                 size="sm"
@@ -89,11 +87,9 @@ export function SSHKeygen() {
                   Copy
                 </Button>
               </div>
-              <div className="bg-muted p-4 rounded-lg text-sm font-mono max-w-full overflow-x-auto elevation-1">
-                <div className="min-w-0 break-words whitespace-pre-wrap">
-                  {keyPair.privateKey}
-                </div>
-              </div>
+              <Codeblock language="privatekey" theme="github-light" showLanguage={false}>
+                {keyPair.privateKey}
+              </Codeblock>
               <Button
                 variant="outline"
                 size="sm"
@@ -120,48 +116,29 @@ export function SSHKeygen() {
             </div>
             <div>
               <strong className="text-primary">2. Set correct permissions:</strong>
-              <ShikiHighlighter language="bash" theme="github-light" showLanguage={false}>
+              <Codeblock language="shell" theme="github-light" showLanguage={false}>
                 {[
                   `chmod 600 ~/.ssh/id_ed25519`,
                   `chmod 644 ~/.ssh/id_ed25519.pub`
                 ].join("\n")}
-              </ShikiHighlighter>
+              </Codeblock>
             </div>
             <div>
               <strong className="text-primary">3. Add to SSH agent:</strong>
-              <div className="mt-2 bg-muted p-3 rounded-lg font-mono text-xs overflow-x-auto elevation-1">
-                <div className="whitespace-nowrap">
-                  <SyntaxHighlighter language="shell" style={github}>
-                    {`ssh-add ~/.ssh/id_ed25519`}
-                  </SyntaxHighlighter>
-                </div>
-              </div>
+              <Codeblock language="shell" theme="github-light" showLanguage={false}>
+                {`ssh-add ~/.ssh/id_ed25519`}
+              </Codeblock>
             </div>
             <div>
               <strong className="text-primary">4. Add public key to servers:</strong>
-              <div className="mt-2 bg-muted p-3 rounded-lg font-mono text-xs overflow-x-auto elevation-1">
-                <div className="whitespace-nowrap">
-                  <SyntaxHighlighter language="shell" style={github}>
-                    {[
-                      `# Copy public key content to ~/.ssh/authorized_keys on target server`,
-                      `# Or use: `,
-                      `ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server`,
-                    ].join("\n")}
-                  </SyntaxHighlighter>
-                </div>
-              </div>
+              <Codeblock language="shell" theme="github-light" showLanguage={false}>
+                {[
+                  `# Copy public key content to ~/.ssh/authorized_keys on target server`,
+                  `# Or use: `,
+                  `ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server`,
+                ].join("\n")}
+              </Codeblock>
             </div>
-          </div>
-        </div>
-
-        <div
-          className="rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-6 elevation-1 w-full">
-          <h3 className="text-lg font-semibold mb-4 text-yellow-800 dark:text-yellow-200">Security Notes</h3>
-          <div className="space-y-3 text-sm text-yellow-700 dark:text-yellow-300 leading-relaxed">
-            <p>• Keys are generated entirely in your browser using the native Web Crypto API</p>
-            <p>• No data is sent to any server - everything happens locally</p>
-            <p>• Private keys should never be shared and should be stored securely</p>
-            <p>• Consider using a passphrase when saving your private key</p>
           </div>
         </div>
       </div>

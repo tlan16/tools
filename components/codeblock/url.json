@@ -1,0 +1,245 @@
+{
+  "displayName": "URL",
+  "name": "url",
+  "scopeName": "source.url",
+  "patterns": [
+    {
+      "include": "#url"
+    },
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#whitespace"
+    }
+  ],
+  "repository": {
+    "url": {
+      "patterns": [
+        {
+          "include": "#standard-url"
+        },
+        {
+          "include": "#file-url"
+        },
+        {
+          "include": "#data-url"
+        },
+        {
+          "include": "#mailto-url"
+        },
+        {
+          "include": "#relative-url"
+        }
+      ]
+    },
+    "standard-url": {
+      "match": "(?i)\\b((?:https?|ftp|sftp|ftps|ssh|git|ws|wss)://)([^\\s/$.?#].[^\\s]*)(?:\\s|$)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.url.scheme"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#authority"
+            },
+            {
+              "include": "#path"
+            },
+            {
+              "include": "#query"
+            },
+            {
+              "include": "#fragment"
+            }
+          ]
+        }
+      }
+    },
+    "file-url": {
+      "match": "(?i)\\b(file:///?)((?:[^\\s/$.?#].[^\\s]*)|(?:/[^\\s]*))(?:\\s|$)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.url.scheme.file"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#file-path"
+            },
+            {
+              "include": "#query"
+            },
+            {
+              "include": "#fragment"
+            }
+          ]
+        }
+      }
+    },
+    "data-url": {
+      "match": "(?i)\\b(data:)([^,]+)?(,)(.+)?(?:\\s|$)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.url.scheme.data"
+        },
+        "2": {
+          "name": "meta.media-type.url"
+        },
+        "3": {
+          "name": "punctuation.separator.url.data"
+        },
+        "4": {
+          "name": "string.unquoted.url.data-content"
+        }
+      }
+    },
+    "mailto-url": {
+      "match": "(?i)\\b(mailto:)([^?\\s]+)(?:(\\?)([^\\s]+))?(?:\\s|$)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.url.scheme.mailto"
+        },
+        "2": {
+          "name": "entity.name.url.email-address"
+        },
+        "3": {
+          "name": "punctuation.separator.url.query-start"
+        },
+        "4": {
+          "patterns": [
+            {
+              "include": "#query-params"
+            }
+          ]
+        }
+      }
+    },
+    "relative-url": {
+      "match": "(?<!\\w)(/[^\\s?#]+)(?:(\\?)([^\\s#]+))?(?:(#)([^\\s]+))?(?:\\s|$)",
+      "captures": {
+        "1": {
+          "name": "string.unquoted.url.path"
+        },
+        "2": {
+          "name": "punctuation.separator.url.query-start"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#query-params"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.separator.url.fragment-start"
+        },
+        "5": {
+          "name": "string.unquoted.url.fragment"
+        }
+      }
+    },
+    "authority": {
+      "patterns": [
+        {
+          "match": "(?:([^@/]+)@)?([^:/\\s]+)(?::(\\d+))?",
+          "captures": {
+            "1": {
+              "name": "entity.name.url.user-info"
+            },
+            "2": {
+              "name": "entity.name.url.host"
+            },
+            "3": {
+              "name": "constant.numeric.url.port"
+            }
+          }
+        }
+      ]
+    },
+    "path": {
+      "match": "(/[^?#\\s]*)",
+      "captures": {
+        "1": {
+          "name": "string.unquoted.url.path"
+        }
+      }
+    },
+    "file-path": {
+      "match": "([^?#\\s]+)",
+      "captures": {
+        "1": {
+          "name": "string.unquoted.url.file-path"
+        }
+      }
+    },
+    "query": {
+      "match": "(\\?)([^#\\s]*)",
+      "captures": {
+        "1": {
+          "name": "punctuation.separator.url.query-start"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#query-params"
+            }
+          ]
+        }
+      }
+    },
+    "query-params": {
+      "match": "([^=&\\s]+)(=)([^&\\s]+)?|([^=&\\s]+)",
+      "captures": {
+        "1": {
+          "name": "variable.parameter.url.query-key"
+        },
+        "2": {
+          "name": "keyword.operator.url.query-assign"
+        },
+        "3": {
+          "name": "string.unquoted.url.query-value"
+        },
+        "4": {
+          "name": "variable.parameter.url.query-key"
+        }
+      }
+    },
+    "fragment": {
+      "match": "(#)([^\\s]*)",
+      "captures": {
+        "1": {
+          "name": "punctuation.separator.url.fragment-start"
+        },
+        "2": {
+          "name": "string.unquoted.url.fragment"
+        }
+      }
+    },
+    "comment": {
+      "patterns": [
+        {
+          "begin": "#",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.url"
+            }
+          },
+          "end": "$",
+          "name": "comment.line.number-sign.url"
+        }
+      ]
+    },
+    "whitespace": {
+      "match": "^\\s*$",
+      "name": "meta.whitespace.url"
+    }
+  },
+  "fileTypes": [
+    "url",
+    "urls",
+    "link",
+    "links"
+  ]
+}

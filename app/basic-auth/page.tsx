@@ -1,4 +1,6 @@
 import type {Metadata} from 'next'
+
+
 import {BasicAuth} from "@/app/basic-auth/components";
 
 export const metadata: Metadata = {

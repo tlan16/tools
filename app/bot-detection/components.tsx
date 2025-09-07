@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {github} from "react-syntax-highlighter/dist/esm/styles/hljs";
 import {useQuery} from "@tanstack/react-query";
+import {Codeblock} from "@/components/codeblock/codeblock";
 
 
 function get(obj: any, path: string | string[], fallback: any = undefined) {
@@ -360,9 +361,9 @@ export function BotDetection() {
                 )}
               </div>
             </div>
-            <SyntaxHighlighter className="mt-4" language="json5" style={github}>
+            <Codeblock language="json5" theme="github-light" showLanguage={false}>
               {JSON.stringify(fingerprint, null, 2)}
-            </SyntaxHighlighter>
+            </Codeblock>
           </div>
         )}
       </div>

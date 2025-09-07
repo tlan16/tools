@@ -1,0 +1,201 @@
+{
+  "displayName": "SSH Public Key",
+  "name": "publickey",
+  "scopeName": "source.publickey",
+  "patterns": [
+    {
+      "include": "#ssh-key"
+    },
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#whitespace"
+    }
+  ],
+  "repository": {
+    "ssh-key": {
+      "patterns": [
+        {
+          "include": "#rsa-key"
+        },
+        {
+          "include": "#dsa-key"
+        },
+        {
+          "include": "#ecdsa-key"
+        },
+        {
+          "include": "#ed25519-key"
+        },
+        {
+          "include": "#sk-ecdsa-key"
+        },
+        {
+          "include": "#sk-ed25519-key"
+        },
+        {
+          "include": "#certificate-key"
+        }
+      ]
+    },
+    "rsa-key": {
+      "begin": "^(ssh-rsa)\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.publickey.algorithm.rsa"
+        }
+      },
+      "end": "(?=\\s*$|\\s*#)",
+      "patterns": [
+        {
+          "include": "#key-data"
+        },
+        {
+          "include": "#key-comment"
+        }
+      ]
+    },
+    "dsa-key": {
+      "begin": "^(ssh-dss)\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.publickey.algorithm.dsa"
+        }
+      },
+      "end": "(?=\\s*$|\\s*#)",
+      "patterns": [
+        {
+          "include": "#key-data"
+        },
+        {
+          "include": "#key-comment"
+        }
+      ]
+    },
+    "ecdsa-key": {
+      "begin": "^(ecdsa-sha2-nistp(?:256|384|521))\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.publickey.algorithm.ecdsa"
+        }
+      },
+      "end": "(?=\\s*$|\\s*#)",
+      "patterns": [
+        {
+          "include": "#key-data"
+        },
+        {
+          "include": "#key-comment"
+        }
+      ]
+    },
+    "ed25519-key": {
+      "begin": "^(ssh-ed25519)\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.publickey.algorithm.ed25519"
+        }
+      },
+      "end": "(?=\\s*$|\\s*#)",
+      "patterns": [
+        {
+          "include": "#key-data"
+        },
+        {
+          "include": "#key-comment"
+        }
+      ]
+    },
+    "sk-ecdsa-key": {
+      "begin": "^(sk-ecdsa-sha2-nistp256@openssh\\.com)\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.publickey.algorithm.sk-ecdsa"
+        }
+      },
+      "end": "(?=\\s*$|\\s*#)",
+      "patterns": [
+        {
+          "include": "#key-data"
+        },
+        {
+          "include": "#key-comment"
+        }
+      ]
+    },
+    "sk-ed25519-key": {
+      "begin": "^(sk-ssh-ed25519@openssh\\.com)\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.publickey.algorithm.sk-ed25519"
+        }
+      },
+      "end": "(?=\\s*$|\\s*#)",
+      "patterns": [
+        {
+          "include": "#key-data"
+        },
+        {
+          "include": "#key-comment"
+        }
+      ]
+    },
+    "certificate-key": {
+      "begin": "^((?:ssh-rsa|ssh-dss|ecdsa-sha2-nistp(?:256|384|521)|ssh-ed25519)-cert-v\\d+@openssh\\.com)\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.publickey.algorithm.certificate"
+        }
+      },
+      "end": "(?=\\s*$|\\s*#)",
+      "patterns": [
+        {
+          "include": "#key-data"
+        },
+        {
+          "include": "#key-comment"
+        }
+      ]
+    },
+    "key-data": {
+      "match": "([A-Za-z0-9+/=]+)(?=\\s|$)",
+      "captures": {
+        "1": {
+          "name": "string.unquoted.base64.publickey.data"
+        }
+      }
+    },
+    "key-comment": {
+      "match": "\\s+([^\\s#]+(?:\\s+[^#]+)*?)(?=\\s*$|\\s*#)",
+      "captures": {
+        "1": {
+          "name": "comment.publickey.user-comment"
+        }
+      }
+    },
+    "comment": {
+      "patterns": [
+        {
+          "begin": "#",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.publickey"
+            }
+          },
+          "end": "$",
+          "name": "comment.line.number-sign.publickey"
+        }
+      ]
+    },
+    "whitespace": {
+      "match": "^\\s*$",
+      "name": "meta.whitespace.publickey"
+    }
+  },
+  "fileTypes": [
+    "pub",
+    "authorized_keys",
+    "known_hosts"
+  ]
+}

@@ -1,0 +1,273 @@
+{
+  "displayName": "SSH Private Key",
+  "name": "privatekey",
+  "scopeName": "source.privatekey",
+  "patterns": [
+    {
+      "include": "#openssh-format"
+    },
+    {
+      "include": "#pem-format"
+    },
+    {
+      "include": "#putty-format"
+    },
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#whitespace"
+    }
+  ],
+  "repository": {
+    "openssh-format": {
+      "begin": "^(-----BEGIN OPENSSH PRIVATE KEY-----)$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.privatekey.begin.openssh"
+        }
+      },
+      "end": "^(-----END OPENSSH PRIVATE KEY-----)$",
+      "endCaptures": {
+        "1": {
+          "name": "keyword.control.privatekey.end.openssh"
+        }
+      },
+      "contentName": "string.unquoted.base64.privatekey.data.openssh",
+      "patterns": [
+        {
+          "match": "^[A-Za-z0-9+/=]+$",
+          "name": "string.unquoted.base64.privatekey.data.openssh"
+        }
+      ]
+    },
+    "pem-format": {
+      "patterns": [
+        {
+          "begin": "^(-----BEGIN RSA PRIVATE KEY-----)$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.begin.rsa"
+            }
+          },
+          "end": "^(-----END RSA PRIVATE KEY-----)$",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.end.rsa"
+            }
+          },
+          "contentName": "string.unquoted.base64.privatekey.data.rsa",
+          "patterns": [
+            {
+              "match": "^[A-Za-z0-9+/=]+$",
+              "name": "string.unquoted.base64.privatekey.data.rsa"
+            },
+            {
+              "include": "#pem-header"
+            }
+          ]
+        },
+        {
+          "begin": "^(-----BEGIN DSA PRIVATE KEY-----)$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.begin.dsa"
+            }
+          },
+          "end": "^(-----END DSA PRIVATE KEY-----)$",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.end.dsa"
+            }
+          },
+          "contentName": "string.unquoted.base64.privatekey.data.dsa",
+          "patterns": [
+            {
+              "match": "^[A-Za-z0-9+/=]+$",
+              "name": "string.unquoted.base64.privatekey.data.dsa"
+            },
+            {
+              "include": "#pem-header"
+            }
+          ]
+        },
+        {
+          "begin": "^(-----BEGIN EC PRIVATE KEY-----)$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.begin.ec"
+            }
+          },
+          "end": "^(-----END EC PRIVATE KEY-----)$",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.end.ec"
+            }
+          },
+          "contentName": "string.unquoted.base64.privatekey.data.ec",
+          "patterns": [
+            {
+              "match": "^[A-Za-z0-9+/=]+$",
+              "name": "string.unquoted.base64.privatekey.data.ec"
+            },
+            {
+              "include": "#pem-header"
+            }
+          ]
+        },
+        {
+          "begin": "^(-----BEGIN PRIVATE KEY-----)$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.begin.pkcs8"
+            }
+          },
+          "end": "^(-----END PRIVATE KEY-----)$",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.end.pkcs8"
+            }
+          },
+          "contentName": "string.unquoted.base64.privatekey.data.pkcs8",
+          "patterns": [
+            {
+              "match": "^[A-Za-z0-9+/=]+$",
+              "name": "string.unquoted.base64.privatekey.data.pkcs8"
+            },
+            {
+              "include": "#pem-header"
+            }
+          ]
+        },
+        {
+          "begin": "^(-----BEGIN ENCRYPTED PRIVATE KEY-----)$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.begin.pkcs8-encrypted"
+            }
+          },
+          "end": "^(-----END ENCRYPTED PRIVATE KEY-----)$",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.end.pkcs8-encrypted"
+            }
+          },
+          "contentName": "string.unquoted.base64.privatekey.data.pkcs8-encrypted",
+          "patterns": [
+            {
+              "match": "^[A-Za-z0-9+/=]+$",
+              "name": "string.unquoted.base64.privatekey.data.pkcs8-encrypted"
+            },
+            {
+              "include": "#pem-header"
+            }
+          ]
+        },
+        {
+          "begin": "^(-----BEGIN SSH2 ENCRYPTED PRIVATE KEY-----)$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.begin.ssh2"
+            }
+          },
+          "end": "^(-----END SSH2 ENCRYPTED PRIVATE KEY-----)$",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.privatekey.end.ssh2"
+            }
+          },
+          "contentName": "string.unquoted.base64.privatekey.data.ssh2",
+          "patterns": [
+            {
+              "match": "^[A-Za-z0-9+/=]+$",
+              "name": "string.unquoted.base64.privatekey.data.ssh2"
+            },
+            {
+              "include": "#pem-header"
+            }
+          ]
+        }
+      ]
+    },
+    "pem-header": {
+      "match": "^(Proc-Type|DEK-Info):\\s+(.+)$",
+      "captures": {
+        "1": {
+          "name": "entity.name.tag.privatekey.pem-header"
+        },
+        "2": {
+          "name": "string.unquoted.privatekey.pem-header-value"
+        }
+      }
+    },
+    "putty-format": {
+      "patterns": [
+        {
+          "match": "^(PuTTY-User-Key-File-\\d+):\\s+(.+)$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.privatekey.putty.header"
+            },
+            "2": {
+              "name": "entity.name.type.privatekey.putty.algorithm"
+            }
+          }
+        },
+        {
+          "match": "^(Encryption|Comment|Public-Lines|Private-Lines|Private-MAC):\\s+(.+)$",
+          "captures": {
+            "1": {
+              "name": "entity.name.tag.privatekey.putty.field"
+            },
+            "2": {
+              "name": "string.unquoted.privatekey.putty.value"
+            }
+          }
+        },
+        {
+          "begin": "^(?:Public|Private)-Lines:\\s+\\d+$",
+          "end": "^(?:Private-MAC:|Public-Lines:|Private-Lines:|Encryption:|Comment:)",
+          "endCaptures": {
+            "0": {
+              "name": "entity.name.tag.privatekey.putty.field"
+            }
+          },
+          "contentName": "string.unquoted.base64.privatekey.data.putty",
+          "patterns": [
+            {
+              "match": "^[A-Za-z0-9+/=]+$",
+              "name": "string.unquoted.base64.privatekey.data.putty"
+            }
+          ]
+        }
+      ]
+    },
+    "comment": {
+      "patterns": [
+        {
+          "begin": "#",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.privatekey"
+            }
+          },
+          "end": "$",
+          "name": "comment.line.number-sign.privatekey"
+        }
+      ]
+    },
+    "whitespace": {
+      "match": "^\\s*$",
+      "name": "meta.whitespace.privatekey"
+    }
+  },
+  "fileTypes": [
+    "key",
+    "pem",
+    "ppk",
+    "id_rsa",
+    "id_dsa",
+    "id_ecdsa",
+    "id_ed25519"
+  ]
+}
