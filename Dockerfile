@@ -1,3 +1,4 @@
+# syntax= docker/dockerfile:1.17-labs
 FROM oven/bun
 
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
@@ -16,7 +17,7 @@ COPY package.json bun.lock ./
 RUN --mount=type=cache,target=/root/.bun/install/cache,sharing=locked \
   bun install --frozen-lockfile
 
-COPY . .
+COPY --exclude=app/api/ . .
 
 
 ENTRYPOINT []

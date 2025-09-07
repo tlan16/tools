@@ -24,6 +24,7 @@ const nextConfig = {
     forceSwcTransforms: false,
   },
   cleanDistDir: true,
+  output: 'export',
 } satisfies NextConfig;
 
 export default withBundleAnalyzer(nextConfig);
