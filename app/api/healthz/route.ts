@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import {NextResponse} from 'next/server'
 
 // Health check endpoint used as /api/dummy (healthz)
 export async function GET() {

@@ -4,7 +4,10 @@ import {
   BasicAuthCredentials,
   CredentialOptions,
   defaultCredential,
-  defaultPasswordOptions, generateCredentials, generatePassword, generateUsername
+  defaultPasswordOptions,
+  generateCredentials,
+  generatePassword,
+  generateUsername
 } from "@/app/basic-auth/generateCredentials";
 import {useForm} from "react-hook-form";
 import {useClipboard} from "@/hooks/use-clipboard";

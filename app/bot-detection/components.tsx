@@ -2,9 +2,7 @@
 
 import {generateFingerprint} from "fpcollect/src/fpCollect";
 import Link from "next/link";
-import {useEffect, useState} from "react";
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import {github} from "react-syntax-highlighter/dist/esm/styles/hljs";
+import {useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {Codeblock} from "@/components/codeblock/codeblock";
 
