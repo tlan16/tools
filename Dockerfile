@@ -1,4 +1,4 @@
-# syntax= docker/dockerfile:1.17-labs
+# syntax= docker/dockerfile:1.18-labs
 FROM oven/bun
 
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
