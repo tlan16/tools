@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "NODE_ENV=production next build",
-    "start": "bun run build && bunx http-server --gzip out"
+    "start": "bun run build && bunx next start"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.7",
@@ -24,6 +24,7 @@
     "next": "canary",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-shiki": "^0.7.4",
     "react-syntax-highlighter": "^15.6.6",
     "tailwind-merge": "^3.3.1"
   },

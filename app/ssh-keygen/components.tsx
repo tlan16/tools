@@ -1,119 +1,23 @@
 'use client'
 
-import {useState, useEffect} from 'react'
 import {Button} from '@/components/ui/button'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {github} from 'react-syntax-highlighter/dist/esm/styles/hljs';
-
-interface KeyPair {
-  publicKey: string
-  privateKey: string
-}
-
-// Convert private key to OpenSSH format
-function formatPrivateKey(privateKeyBuffer: ArrayBuffer): string {
-  const base64Key = btoa(String.fromCharCode(...new Uint8Array(privateKeyBuffer)))
-  const lines = base64Key.match(/.{1,64}/g) || []
-  return `-----BEGIN OPENSSH PRIVATE KEY-----\n${lines.join('\n')}\n-----END OPENSSH PRIVATE KEY-----`
-}
-
-// Convert public key to SSH format
-function formatPublicKey(publicKeyBytes: Uint8Array): string {
-  // SSH Ed25519 public key format
-  const keyType = 'ssh-ed25519'
-  const keyTypeBytes = new TextEncoder().encode(keyType)
-
-  // Create SSH wire format
-  const totalLength = 4 + keyTypeBytes.length + 4 + publicKeyBytes.length
-  const sshKey = new Uint8Array(totalLength)
-  let offset = 0
-
-  // Key type length (4 bytes, big endian)
-  sshKey[offset++] = 0
-  sshKey[offset++] = 0
-  sshKey[offset++] = 0
-  sshKey[offset++] = keyTypeBytes.length
-
-  // Key type
-  sshKey.set(keyTypeBytes, offset)
-  offset += keyTypeBytes.length
-
-  // Public key length (4 bytes, big endian)
-  sshKey[offset++] = 0
-  sshKey[offset++] = 0
-  sshKey[offset++] = 0
-  sshKey[offset++] = publicKeyBytes.length
-
-  // Public key
-  sshKey.set(publicKeyBytes, offset)
-
-  const base64Key = btoa(String.fromCharCode(...sshKey))
-  return `ssh-ed25519 ${base64Key}`
-}
+import {useQuery} from "@tanstack/react-query";
+import {generateKeyPair} from "@/app/ssh-keygen/generateKeyPair";
+import {useClipboard} from '@/hooks/use-clipboard'
+import ShikiHighlighter from "react-shiki";
+import '@/components/styles/codeblock.css'
 
 export function SSHKeygen() {
-  const [keyPair, setKeyPair] = useState<KeyPair | null>(null)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const {isFetching, data: keyPair, refetch} = useQuery({
+    queryKey: ['ssh-keygen-keypair'],
+    queryFn: generateKeyPair,
+    retry: 10,
+    enabled: true,
+  })
 
-  const generateKeyPair = async () => {
-    setIsGenerating(true)
-    setError(null)
-
-    try {
-      // Check if Ed25519 is supported
-      if (!window.crypto || !window.crypto.subtle) {
-        throw new Error('Web Crypto API not supported in this browser')
-      }
-
-      // Generate Ed25519 key pair
-      const cryptoKeyPair = await window.crypto.subtle.generateKey(
-        {
-          name: 'Ed25519',
-        },
-        true, // extractable
-        ['sign', 'verify']
-      )
-
-      // Export keys
-      const [privateKeyBuffer, publicKeyBuffer] = await Promise.all([
-        window.crypto.subtle.exportKey('pkcs8', cryptoKeyPair.privateKey),
-        window.crypto.subtle.exportKey('spki', cryptoKeyPair.publicKey)
-      ])
-
-      // Extract the actual Ed25519 key material from the SPKI format
-      // Ed25519 public key is 32 bytes, located at the end of the SPKI structure
-      const publicKeyBytes = new Uint8Array(publicKeyBuffer).slice(-32)
-
-      const formattedPublicKey = formatPublicKey(publicKeyBytes)
-      const formattedPrivateKey = formatPrivateKey(privateKeyBuffer)
-
-      setKeyPair({
-        publicKey: formattedPublicKey,
-        privateKey: formattedPrivateKey
-      })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate key pair')
-    } finally {
-      setIsGenerating(false)
-    }
-  }
-
-  // Auto-generate key pair on component mount
-  useEffect(() => {
-    generateKeyPair()
-  }, [])
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      if (!navigator.clipboard) {
-        throw new Error('Clipboard API not available. Please use a modern browser or ensure the page is served over HTTPS.')
-      }
-      await navigator.clipboard.writeText(text)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to copy to clipboard')
-    }
-  }
+  const {copyToClipboard, error} = useClipboard()
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6 lg:p-8 xl:p-12 pt-4 sm:pt-6 w-full">
@@ -129,13 +33,13 @@ export function SSHKeygen() {
           </p>
 
           <Button
-            onClick={generateKeyPair}
-            disabled={isGenerating}
+            onClick={() => refetch()}
+            disabled={isFetching}
             variant="default"
             size="lg"
             className="mb-4"
           >
-            {isGenerating ? 'Generating...' : 'Generate Ed25519 Key Pair'}
+            {isFetching ? 'Generating...' : 'Generate Ed25519 Key Pair'}
           </Button>
 
           {error && (
@@ -160,12 +64,9 @@ export function SSHKeygen() {
                   Copy
                 </Button>
               </div>
-              <div
-                className="bg-muted p-4 rounded-lg text-sm font-mono break-all max-w-full overflow-x-auto elevation-1">
-                <div className="min-w-0 break-words whitespace-pre-wrap">
-                  {keyPair.publicKey}
-                </div>
-              </div>
+              <ShikiHighlighter language="shell" theme="github-light" showLanguage={false}>
+                {keyPair.publicKey}
+              </ShikiHighlighter>
               <Button
                 variant="outline"
                 size="sm"
@@ -219,16 +120,12 @@ export function SSHKeygen() {
             </div>
             <div>
               <strong className="text-primary">2. Set correct permissions:</strong>
-              <div className="mt-2 bg-muted p-3 rounded-lg font-mono text-xs overflow-x-auto elevation-1">
-                <div className="whitespace-nowrap">
-                  <SyntaxHighlighter language="shell" style={github}>
-                    {[
-                      `chmod 600 ~/.ssh/id_ed25519`,
-                      `chmod 644 ~/.ssh/id_ed25519.pub`
-                    ].join("\n")}
-                  </SyntaxHighlighter>
-                </div>
-              </div>
+              <ShikiHighlighter language="bash" theme="github-light" showLanguage={false}>
+                {[
+                  `chmod 600 ~/.ssh/id_ed25519`,
+                  `chmod 644 ~/.ssh/id_ed25519.pub`
+                ].join("\n")}
+              </ShikiHighlighter>
             </div>
             <div>
               <strong className="text-primary">3. Add to SSH agent:</strong>
