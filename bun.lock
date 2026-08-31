@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "tools",
@@ -26,7 +27,7 @@
         "tailwind-merge": "^3.3.1",
       },
       "devDependencies": {
-        "@next/bundle-analyzer": "^15.5.2",
+        "@next/bundle-analyzer": "^16.0.0",
         "@swc/cli": "^0.7.8",
         "@swc/core": "^1.13.5",
         "@tailwindcss/postcss": "^4",
@@ -159,7 +160,7 @@
 
     "@napi-rs/nice-win32-x64-msvc": ["@napi-rs/nice-win32-x64-msvc@1.1.1", "", { "os": "win32", "cpu": "x64" }, "sha512-vB+4G/jBQCAh0jelMTY3+kgFy00Hlx2f2/1zjMoH821IbplbWZOkLiTYXQkygNTzQJTq5cvwBDgn2ppHD+bglQ=="],
 
-    "@next/bundle-analyzer": ["@next/bundle-analyzer@15.5.2", "", { "dependencies": { "webpack-bundle-analyzer": "4.10.1" } }, "sha512-UWOFpy/NK5iSeIP0mgdq4VqGB4/z37uq5v5dEtvzmY/BlaPO6m4EtFUaH6RVI0w2wG5sh0TG86i/cA5wcaJtgg=="],
+    "@next/bundle-analyzer": ["@next/bundle-analyzer@16.3.4", "", { "dependencies": { "webpack-bundle-analyzer": "4.10.1" } }, "sha512-AxZugwx+m38jPuPxNtqX7JAg6M6WJH6pIUTqNG0Rq6i6BkluozpcwrF0QewmUQZAF4FRfGtcFAGA7/T7hX079w=="],
 
     "@next/env": ["@next/env@15.5.1-canary.20", "", {}, "sha512-pUQ+T/qT2+xLcFo+XWA470eJpRICo9pkDmQww55pO17gKd2AoTxm6+/xZTv8PssQka1Sb3sLD6SQbFHUqtviyA=="],
 
